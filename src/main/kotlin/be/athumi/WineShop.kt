@@ -57,6 +57,10 @@ class WineShop(var items: List<Wine>) {
         }
     }
 
+    /**
+     * apply the specific price for Event wine
+     * the price faster increase IF it is closer to expiration date
+     */
     private fun handleEventWine(wine: Wine) {
         increasePriceIfPossible(wine)
 
@@ -78,12 +82,20 @@ class WineShop(var items: List<Wine>) {
 
     }
 
+    //handle the wine price after expired
     private fun handleExpiration(wine: Wine) {
         when {
             wine.expiresInYears >= MIN_PRICE -> return
             wine.name.contains(CONSERVATO) -> increasePriceIfPossible(wine)
             wine.name.contains(EVENT) -> wine.price = MIN_PRICE
             else -> if (wine.price > MIN_PRICE) wine.price -= 1
+        }
+    }
+
+    //when wine name not bewered by Alexander the Great then price
+    private fun handlePriceLimits(wine: Wine) {
+        if(wine.name != WINE_BREWED_BY_ALEXANDER_THE_GREAT) {
+            wine.price = wine.price.coerceIn(MIN_PRICE, MAX_PRICE)
         }
     }
 
@@ -94,15 +106,10 @@ class WineShop(var items: List<Wine>) {
             when{
                 isStandardWine(wine) -> decreaseWinePrice(wine)
                 else -> handleSpecialWine(wine)
-
             }
-
             updateExpiration(wine)
             handleExpiration(wine)
-
-            if (wine.price < 0) {
-                wine.price = 0
-            }
+            handlePriceLimits(wine)
         }
     }
 
