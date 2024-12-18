@@ -58,26 +58,34 @@ class WineShop(var items: List<Wine>) {
     }
 
     private fun handleEventWine(wine: Wine) {
-        if (wine.name.startsWith(EVENT)) {
-            if (wine.expiresInYears < 8) {
-                increasePriceIfPossible(wine)
-            }
+        increasePriceIfPossible(wine)
 
-            if (wine.expiresInYears < 3) {
-                increasePriceIfPossible(wine, 2)
-            }
+        if (wine.expiresInYears < 8) {
+            increasePriceIfPossible(wine)
         }
+        if (wine.expiresInYears < 3) {
+            increasePriceIfPossible(wine, 2)
+        }
+
+    }
+
+    //handle Special wine
+    private fun handleSpecialWine(wine: Wine) {
+        when {
+            wine.name.startsWith(EVENT) -> handleEventWine(wine)
+            else -> increasePriceIfPossible(wine)
+        }
+
     }
 
     fun next() {
         // Wine Shop logic
         items.forEach { wine ->
 
-            if (isStandardWine(wine)) {
-                decreaseWinePrice(wine)
-            } else {
-                increasePriceIfPossible(wine)
-                handleEventWine(wine)
+            when{
+                isStandardWine(wine) -> decreaseWinePrice(wine)
+                else -> handleSpecialWine(wine)
+
             }
 
             updateExpiration(wine)
