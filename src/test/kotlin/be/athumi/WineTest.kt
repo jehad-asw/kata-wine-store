@@ -104,4 +104,13 @@ class WineTest {
         assertEquals(51, shop.items[0].price)
     }
 
+    @Test
+    fun `check Eco Brilliant Wine`() {
+        val shop = WineShop(listOf(Wine("Eco Brilliant Wine", 6, 3)))
+
+        shop.next()
+        assertEquals(2, shop.items[0].expiresInYears)
+        assertEquals(4, shop.items[0].price)
+    }
+
 }

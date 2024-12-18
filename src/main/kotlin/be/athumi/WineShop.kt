@@ -22,6 +22,7 @@ class WineShop(var items: List<Wine>) {
     private fun isStandardWine(wine: Wine): Boolean {
         return wine.name != BOURDEAUX_CONSERVATO &&
                 wine.name != BOURGOGNE_CONSERVATO &&
+                wine.name != ECO_BRILLIANT_WINE &&
                 !wine.name.startsWith(EVENT)
     }
 
@@ -88,6 +89,7 @@ class WineShop(var items: List<Wine>) {
             wine.expiresInYears >= MIN_PRICE -> return
             wine.name.contains(CONSERVATO) -> increasePriceIfPossible(wine)
             wine.name.contains(EVENT) -> wine.price = MIN_PRICE
+            isEcoWine(wine) -> if(wine.price > 0) wine.price -= 4
             else -> if (wine.price > MIN_PRICE) wine.price -= 1
         }
     }
@@ -99,12 +101,24 @@ class WineShop(var items: List<Wine>) {
         }
     }
 
+    //check if wine is an Eco Brilliant Wine
+    private fun isEcoWine(wine: Wine): Boolean {
+        return wine.name.contains(ECO_BRILLIANT_WINE, ignoreCase = true)
+
+    }
+    private fun handleEcoWine(wine: Wine) {
+        if(wine.price > 0){
+            wine.price -= 2
+        }
+    }
+
     fun next() {
         // Wine Shop logic
         items.forEach { wine ->
 
             when{
                 isStandardWine(wine) -> decreaseWinePrice(wine)
+                isEcoWine(wine) -> handleEcoWine(wine)
                 else -> handleSpecialWine(wine)
             }
             updateExpiration(wine)
