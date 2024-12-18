@@ -78,6 +78,15 @@ class WineShop(var items: List<Wine>) {
 
     }
 
+    private fun handleExpiration(wine: Wine) {
+        when {
+            wine.expiresInYears >= MIN_PRICE -> return
+            wine.name.contains(CONSERVATO) -> increasePriceIfPossible(wine)
+            wine.name.contains(EVENT) -> wine.price = MIN_PRICE
+            else -> if (wine.price > MIN_PRICE) wine.price -= 1
+        }
+    }
+
     fun next() {
         // Wine Shop logic
         items.forEach { wine ->
@@ -89,18 +98,7 @@ class WineShop(var items: List<Wine>) {
             }
 
             updateExpiration(wine)
-
-            if (wine.expiresInYears < 0) {
-                if (!wine.name.contains(CONSERVATO)) {
-                    if (!wine.name.contains(EVENT)) {
-                        decreaseWinePrice(wine)
-                    } else {
-                        wine.price = wine.price - wine.price
-                    }
-                } else {
-                    increasePriceIfPossible(wine)
-                }
-            }
+            handleExpiration(wine)
 
             if (wine.price < 0) {
                 wine.price = 0
