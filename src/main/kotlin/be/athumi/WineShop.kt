@@ -50,52 +50,54 @@ class WineShop(var items: List<Wine>) {
         }
     }
 
+    //Decrease the expires years by 1 if not brewed by Alexander the Great
+    private fun updateExpiration(wine: Wine) {
+        if(wine.name != WINE_BREWED_BY_ALEXANDER_THE_GREAT){
+            wine.expiresInYears -= 1
+        }
+    }
+
 
     fun next() {
         // Wine Shop logic
-        for (i in items.indices) {
-            if (isStandardWine(items[i])) {
-                decreaseWinePrice(items[i])
-            } else {
-                if (items[i].price < 100) {
-                    items[i].price = items[i].price + 1
+        items.forEach { wine ->
 
-                    if (items[i].name.startsWith(EVENT)) {
-                        if (items[i].expiresInYears < 8) {
-                            increasePriceIfPossible(items[i])
+        if (isStandardWine(wine)) {
+                decreaseWinePrice(wine)
+            } else {
+                if (wine.price < 100) {
+                   increasePriceIfPossible(wine)
+
+                    if (wine.name.startsWith(EVENT)) {
+                        if (wine.expiresInYears < 8) {
+                            increasePriceIfPossible(wine)
                         }
 
-                        if (items[i].expiresInYears < 3) {
-
-                            increasePriceIfPossible(items[i], 2)
-
+                        if (wine.expiresInYears < 3) {
+                            increasePriceIfPossible(wine, 2)
                         }
                     }
                 }
             }
 
-            if (isNotBrewedByAlexander(items[i])) {
-                items[i].expiresInYears = items[i].expiresInYears - 1
-            } else if (items[i].price < 0) {
-                items[i].price = 0
-            }
+            updateExpiration(wine)
 
-            if (items[i].expiresInYears < 0) {
-                if (!items[i].name.contains(CONSERVATO)) {
-                    if (!items[i].name.contains(EVENT)) {
-                        decreaseWinePrice(items[i])
+            if (wine.expiresInYears < 0) {
+                if (!wine.name.contains(CONSERVATO)) {
+                    if (!wine.name.contains(EVENT)) {
+                        decreaseWinePrice(wine)
                     } else {
-                        items[i].price = items[i].price - items[i].price
+                        wine.price = wine.price - wine.price
                     }
                 } else {
-                    if (items[i].price < 100) {
-                        increasePriceIfPossible(items[i])
+                    if (wine.price < 100) {
+                        increasePriceIfPossible(wine)
                     }
                 }
             }
 
-            if (items[i].price < 0) {
-                items[i].price = 0
+            if (wine.price < 0) {
+                wine.price = 0
             }
         }
     }
