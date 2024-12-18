@@ -52,32 +52,32 @@ class WineShop(var items: List<Wine>) {
 
     //Decrease the expires years by 1 if not brewed by Alexander the Great
     private fun updateExpiration(wine: Wine) {
-        if(wine.name != WINE_BREWED_BY_ALEXANDER_THE_GREAT){
+        if (wine.name != WINE_BREWED_BY_ALEXANDER_THE_GREAT) {
             wine.expiresInYears -= 1
         }
     }
 
+    private fun handleEventWine(wine: Wine) {
+        if (wine.name.startsWith(EVENT)) {
+            if (wine.expiresInYears < 8) {
+                increasePriceIfPossible(wine)
+            }
+
+            if (wine.expiresInYears < 3) {
+                increasePriceIfPossible(wine, 2)
+            }
+        }
+    }
 
     fun next() {
         // Wine Shop logic
         items.forEach { wine ->
 
-        if (isStandardWine(wine)) {
+            if (isStandardWine(wine)) {
                 decreaseWinePrice(wine)
             } else {
-                if (wine.price < 100) {
-                   increasePriceIfPossible(wine)
-
-                    if (wine.name.startsWith(EVENT)) {
-                        if (wine.expiresInYears < 8) {
-                            increasePriceIfPossible(wine)
-                        }
-
-                        if (wine.expiresInYears < 3) {
-                            increasePriceIfPossible(wine, 2)
-                        }
-                    }
-                }
+                increasePriceIfPossible(wine)
+                handleEventWine(wine)
             }
 
             updateExpiration(wine)
@@ -90,9 +90,7 @@ class WineShop(var items: List<Wine>) {
                         wine.price = wine.price - wine.price
                     }
                 } else {
-                    if (wine.price < 100) {
-                        increasePriceIfPossible(wine)
-                    }
+                    increasePriceIfPossible(wine)
                 }
             }
 
@@ -101,6 +99,8 @@ class WineShop(var items: List<Wine>) {
             }
         }
     }
+
+
 
 
 }
